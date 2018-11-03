@@ -1,6 +1,7 @@
 import os
 import requests
 
+
 authKey = os.environ['KEY']
 
 #Make a get request to SalesLoft people data and return the json contents
@@ -25,6 +26,19 @@ def printDict(dictData, colNames):
 
 jsonPeopleData = getPeopleData()
 peopleData = jsonPeopleData['data']
+
+#Part 1 with console output
 printDict(peopleData, ['first_name', 'last_name', 'email_address', 'title'])
+
+#Part 2
+dictLetterFreq = dict()
+
+for person in peopleData:
+    for cha in person['email_address']:
+        if cha in dictLetterFreq:
+            dictLetterFreq[cha] += 1
+        else:
+            dictLetterFreq[cha] = 1
+            
 
           
