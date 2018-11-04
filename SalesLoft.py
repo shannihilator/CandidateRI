@@ -1,6 +1,8 @@
 import os
 import requests
-
+from SalesLoftGui import SalesLoftGUI
+from tkinter import Tk
+from operator import itemgetter
 
 authKey = os.environ['KEY']
 
@@ -39,6 +41,13 @@ for person in peopleData:
             dictLetterFreq[cha] += 1
         else:
             dictLetterFreq[cha] = 1
-            
-
+listLetterFreq = list(dictLetterFreq.items()) #Convert the dict to a list
+listLetterFreq.sort(key=itemgetter(1),reverse=True) #Sort items by frequency
           
+root = Tk()
+my_gui = SalesLoftGUI(root)
+my_gui.addTable(peopleData, ['first_name', 'last_name', 'email_address', 'title'],
+                ['First Name','Last Name', 'Email', 'Job Title'])
+                
+my_gui.addTable(listLetterFreq, [0,1], ['Letter', 'Frequency'])
+root.mainloop()
