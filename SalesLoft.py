@@ -1,3 +1,9 @@
+# -*- coding: utf-8 -*-
+"""
+Created on Saturday, ‎November ‎3, ‎2018, ‏‎2:22:57 PM
+
+@author: Rahul Isaac
+"""
 import os
 import requests
 from SalesLoftGui import SalesLoftGUI
