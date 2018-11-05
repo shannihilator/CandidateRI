@@ -6,33 +6,32 @@ from operator import itemgetter
 
 authKey = os.environ['KEY']
 
-#Make a get request to SalesLoft people data and return the json contents
-def getPeopleData():
-    urlApiPeople = "https://api.salesloft.com/v2/people.json"
+#Helper methods 
+
+#Extracts a single column from a list of lists/tuples/dicts
+def getColumnFromTable(data, column):
+    return [x[column] for x in data]            
+
+#Part 1
+
+#Make a get request to a SalesLoft api and return the json contents
+def getData(urlApi):
     headers = {
         'Authorization' : 'Bearer ' + authKey
     }
 
-    apiRequest = requests.get(urlApiPeople, headers = headers  )
+    apiRequest = requests.get(urlApi, headers = headers  )
     data = apiRequest.json()
     return data
 
-#Temporary function for printing out the data; will be replaced by a function 
-#in the SalesLoftGui Class
-def printList(listData, columns):
-    for item in listData:
-        for col in columns:
-            print(item[col], end = '\t')
-        print()
-            
-
 #Part 2
 
-def getPeopleLetterFreq(column):
+#Returns the frequency of letters in a list of strings
+def getLetterFreq(listStrings):
     #Use a dictionary to count the frequency of letters
     dictLetterFreq = dict()
-    for person in peopleData:
-        for cha in person[column]:
+    for string in listStrings:
+        for cha in string:
             if cha in dictLetterFreq:
                 dictLetterFreq[cha] += 1
             else:
@@ -40,14 +39,11 @@ def getPeopleLetterFreq(column):
     listLetterFreq = list(dictLetterFreq.items()) #Convert the dict to a list
     listLetterFreq.sort(key=itemgetter(1),reverse=True) #Sort items by frequency
     return listLetterFreq
-        
-def onclickFreqButton():
-    listLetterFreq = getPeopleLetterFreq('email_address')
-    guiSalesLoft.addTable(listLetterFreq, [0,1], ['Letter', 'Frequency'])
 
 #Part 3
 
-
+#Returns a list where each row is (string1, string2, similarity)
+#Only strings where similarity > alpha in the list
 def generateSimilarityList(strings, alpha=.9):
     similarityList = []
     for i in range(len(strings)):
@@ -60,9 +56,14 @@ def generateSimilarityList(strings, alpha=.9):
                     similarity
                     ]
                 )
+    similarityList.sort(key=itemgetter(2),reverse=True) #Sort items by frequency
     return similarityList
             
 #Returns the simillarity between two strings by counting common characters
+#Obvious drawbacks such as "abc" and ""cba" having 1.0 similarity
+#However, it should have a very few false negatives
+#A better implementation would be to use a well know algorithm to compute
+#a metric like the Levenshtein Distance
 def getSimilarity(str1, str2, ignoreCase = True):
     commonChars = 0
     maxStrLen = max(len(str1),len(str2))
@@ -72,21 +73,31 @@ def getSimilarity(str1, str2, ignoreCase = True):
         str2 = str2.lower()
         
     for c in str1:
-        if str2.find(c) >= 0: #If the character was found
-            str2.replace(c,'',1) #Remove it
+
+        if str2.find(c) >= 0: 
+            str2.replace(c,'',1)  #Remove exactly one of it, so duplicate 
+                            #characters are corretly handled
             commonChars +=1
     return commonChars/maxStrLen
 
-def getColumnFromTable(data, column):
-    return [x[column] for x in data]
+#Event Handlers
 
+#Handles the event when the "Letter Frequency" button is pressed        
+def onclickFreqButton():
+    listEmails = getColumnFromTable(peopleData, 'email_address')
+    listLetterFreq = getLetterFreq(listEmails)
+    guiSalesLoft.addTable(listLetterFreq, [0,1], ['Letter', 'Frequency'])
+
+#Handles the event when the "Find Duplicates" button is pressed
 def onclickDuplicatesButton():
-    listDuplicates = generateSimilarityList(getColumnFromTable(peopleData,'email_address'))
+    listEmails = getColumnFromTable(peopleData,'email_address')
+    listDuplicates = generateSimilarityList(listEmails,.7)
     guiSalesLoft.addTable(listDuplicates, [0,1,2], ['Email 1', 'Email 2', 'Similarity'])
 
+#Program execution starts here
+
 #Get Data
-jsonPeopleData = getPeopleData()
-peopleData = jsonPeopleData['data']
+peopleData = getData('https://api.salesloft.com/v2/people.json')['data']
 
         
 #GUI Code          
