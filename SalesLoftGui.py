@@ -21,9 +21,8 @@ class SalesLoftGUI(Frame):
         
         vsb = Scrollbar(frame, orient="vertical", command=tv.yview)
         vsb.pack(side='right', fill='y')
-        
+    
         tv.configure(yscrollcommand=vsb.set)
-
         
         #Set up the first column
         tv.heading("#0", text=columnNames[0])
@@ -32,8 +31,6 @@ class SalesLoftGUI(Frame):
         #Set up the remaining columns
         for col, colName in zip(columns[1:], columnNames[1:]):
             tv.heading(col, text=colName)
-        
-      
         
         #Add the data
         for d in data:
@@ -46,4 +43,3 @@ class SalesLoftGUI(Frame):
     def addButton(self, buttonText, onClick):
         b = Button(self.frameButtons, text=buttonText, command=onClick)
         b.pack(side="left")
-        #b.grid()
