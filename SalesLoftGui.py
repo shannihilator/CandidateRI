@@ -2,7 +2,7 @@
 """
 Created on ‎Saturday, ‎November ‎3, ‎2018, ‏‎2:25:35 PM
 
-@author: Rahul Isaac
+@author: RI
 """
 from tkinter import N, S, W, E, Frame, Button
 from tkinter.ttk import Treeview, Scrollbar
