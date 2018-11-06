@@ -2,7 +2,7 @@
 """
 Created on Saturday, ‎November ‎3, ‎2018, ‏‎2:22:57 PM
 
-@author: Rahul Isaac
+@author: RI
 """
 import os
 import requests
